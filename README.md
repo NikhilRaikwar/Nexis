@@ -45,7 +45,7 @@ Nexis is a decentralized AI-powered Web3 assistant that simplifies blockchain in
 ### Prerequisites
 
 - Node.js 18+ or Bun
-- npm, yarn, or pnpm package manager
+- npm or yarn package manager
 - Git
 
 ### Installation
@@ -59,12 +59,6 @@ Nexis is a decentralized AI-powered Web3 assistant that simplifies blockchain in
 2. **Install dependencies**
    ```bash
    npm install
-   # or
-   yarn install
-   # or
-   pnpm install
-   # or
-   bun install
    ```
 
 3. **Environment Setup**
@@ -82,12 +76,6 @@ Nexis is a decentralized AI-powered Web3 assistant that simplifies blockchain in
 4. **Start the development server**
    ```bash
    npm run dev
-   # or
-   yarn dev
-   # or
-   pnpm dev
-   # or
-   bun dev
    ```
 
 5. **Open your browser**

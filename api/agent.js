@@ -556,3 +556,79 @@ console.log('🔄 Server setup complete, keeping process alive...');
 
 console.log('Current working directory:', process.cwd());
 console.log('Environment file path:', envPath);
+
+// Remove the Express server setup and replace with Vercel serverless function
+export default async function handler(req, res) {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+
+  // Handle OPTIONS request
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { input, privateKey } = req.body;
+    
+    if (!input) {
+      return res.status(400).json({ error: 'Input is required' });
+    }
+
+    // Validate environment variables
+    if (!OPENAI_API_KEY) {
+      log.error('OPENAI_API_KEY not configured');
+      return res.status(500).json({ error: 'AI service not configured. Please check environment variables.' });
+    }
+
+    const messages = [];
+    
+    // If private key is provided, set wallet first
+    if (privateKey) {
+      const chainMatch = input.toLowerCase().match(/\b(ethereum|monad|bsc|basesepolia)\b/);
+      const defaultChain = chainMatch ? chainMatch[1] : 'baseSepolia';
+      messages.push(new HumanMessage(`setWallet ${privateKey} ${defaultChain}`));
+    }
+    
+    messages.push(new HumanMessage(input));
+
+    log.info(`Processing request: ${input}`);
+    
+    const result = await agent.invoke({ messages });
+    const lastMessage = result.messages[result.messages.length - 1];
+    
+    log.info('Request processed successfully');
+    
+    res.json({ 
+      response: lastMessage.content,
+      timestamp: new Date().toISOString(),
+      chain_support: Object.keys(CHAINS)
+    });
+    
+  } catch (error) {
+    log.error("Agent handler error:", error);
+    
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    
+    // Don't expose sensitive error details in production
+    const publicError = errorMessage.includes('API key') || errorMessage.includes('unauthorized') 
+      ? 'Service temporarily unavailable. Please check API configuration.' 
+      : errorMessage;
+    
+    res.status(500).json({ 
+      error: `Failed to process request: ${publicError}`,
+      timestamp: new Date().toISOString()
+    });
+  }
+}

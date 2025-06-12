@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "dev:agent": "node server/agent.js",
     "dev:full": "concurrently \"npm run dev\" \"npm run dev:agent\"",
-    "start:agent": "node server/agent.js"
+    "start:agent": "node server/agent.js",
+    "vercel-build": "npm run build"
   },
   "dependencies": {
     "@civic/auth-web3": "^0.5.15",

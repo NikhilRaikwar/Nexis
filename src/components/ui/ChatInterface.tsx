@@ -6,12 +6,13 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage, Message } from './ChatMessage';
 import { useToast } from '@/hooks/use-toast';
+import { API_CONFIG, makeApiRequest } from '../../config/api';
 
 export const ChatInterface: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: 'Hello! I\'m your Web3 AI assistant. I can help you with blockchain transactions, check balances, and more. What would you like to do?',
+      content: 'Hello! I\'m Nexis, your AI-powered Web3 assistant. I can help you with blockchain transactions, check balances, and more on multiple networks including Base Sepolia, Ethereum, BSC, and Monad. What would you like to do?',
       role: 'assistant',
       timestamp: new Date(),
     },
@@ -34,6 +35,28 @@ export const ChatInterface: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
+  const handleSendMessage = async (message: string) => {
+    try {
+      const response = await makeApiRequest(API_CONFIG.ENDPOINTS.AGENT, {
+        input: message
+      });
+      
+      // Add the assistant's response to messages
+      const assistantMessage: Message = {
+        id: Date.now().toString(),
+        content: response.response || 'I apologize, but I received an empty response.',
+        role: 'assistant',
+        timestamp: new Date(),
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
+      
+    } catch (error) {
+      console.error('Error sending message:', error);
+      throw error;
+    }
+  };
+
   const sendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
 
@@ -49,35 +72,26 @@ export const ChatInterface: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Simulate AI response for demo purposes
-      setTimeout(() => {
-        const responses = [
-          "I understand you want to perform a blockchain operation. For security reasons, I'll need to verify your wallet connection first.",
-          "That's a great question about Web3! Let me help you with that transaction.",
-          "I can help you check your balance. Please make sure your wallet is connected to the Base network.",
-          "For tipping operations, I'll need the recipient's address and the amount you'd like to send.",
-          "I'm here to assist with your blockchain needs. What specific operation would you like to perform?"
-        ];
-        
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          content: randomResponse,
-          role: 'assistant',
-          timestamp: new Date(),
-        };
-
-        setMessages(prev => [...prev, assistantMessage]);
-        setIsLoading(false);
-      }, 1500);
+      await handleSendMessage(userMessage.content);
+      
     } catch (error) {
       console.error('Error sending message:', error);
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: 'I apologize, but I\'m having trouble connecting to the AI services right now. Please make sure the API is properly deployed and configured with your OpenAI API key.',
+        role: 'assistant',
+        timestamp: new Date(),
+      };
+
+      setMessages(prev => [...prev, errorMessage]);
+      
       toast({
-        title: 'Error',
-        description: 'Failed to send message. Please try again.',
+        title: 'Connection Error',
+        description: 'Failed to connect to AI agent. Please check API configuration.',
         variant: 'destructive',
       });
+    } finally {
       setIsLoading(false);
     }
   };
@@ -108,7 +122,7 @@ export const ChatInterface: React.FC = () => {
                 <Loader2 className="w-4 h-4 animate-spin text-white" />
               </div>
               <div className="glass border border-white/10 px-4 py-2 rounded-lg">
-                <span className="text-gray-400">AI is thinking...</span>
+                <span className="text-gray-400">Nexis is thinking...</span>
               </div>
             </div>
           )}
@@ -122,7 +136,7 @@ export const ChatInterface: React.FC = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask about Web3 transactions, balances, or blockchain queries..."
+            placeholder="Ask about balances, send tokens, or any blockchain operation..."
             className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-gray-400"
             disabled={isLoading}
           />
@@ -137,6 +151,9 @@ export const ChatInterface: React.FC = () => {
               <Send className="w-4 h-4" />
             )}
           </Button>
+        </div>
+        <div className="mt-2 text-xs text-gray-500 text-center">
+          Powered by Nexis AI • Multi-Chain Support • OpenAI GPT-4
         </div>
       </div>
     </motion.div>

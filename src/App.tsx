@@ -8,11 +8,13 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { useApiHealth } from './hooks/useApiHealth';
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const civicAuthClientId = import.meta.env.VITE_CIVIC_AUTH_CLIENT_ID;
+  const { isHealthy, error } = useApiHealth();
 
   if (!civicAuthClientId) {
     console.error('VITE_CIVIC_AUTH_CLIENT_ID is not defined in environment variables');
@@ -35,6 +37,11 @@ const App = () => {
           <div className="min-h-screen bg-background">
             <Toaster />
             <Sonner />
+            {!isHealthy && (
+              <div className="bg-red-500 text-white p-2">
+                {error || 'Backend server is not responding'}
+              </div>
+            )}
             <BrowserRouter>
               <AuthProvider>
                 <Routes>

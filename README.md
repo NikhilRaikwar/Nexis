@@ -243,7 +243,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Nikhil Raikwar**
 - GitHub: [@nikhilraikwar](https://github.com/nikhilraikwar)
-- Email: contact@nikhilraikwar.com
+- Email: raikwarnikhil80@gmail.com
 
 ## 🙏 Acknowledgments
 
@@ -254,17 +254,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 📧 Email: support@nexis.app
+- 📧 Email: aelixai1@gmail.com
 - 🐛 Issues: [GitHub Issues](https://github.com/nikhilraikwar/nexis/issues)
-- 💬 Discord: [Join our community](https://discord.gg/nexis)
 
 ---
 
 <div align="center">
   <p>Made with ❤️ by the Nexis team</p>
   <p>
-    <a href="https://nexis.vercel.app">🌐 Website</a> •
+    <a href="[https://nexis-mocha.vercel.app/](https://nexis-mocha.vercel.app/)">🌐 Website</a> •
     <a href="https://github.com/nikhilraikwar/nexis">📱 GitHub</a> •
-    <a href="https://twitter.com/nexis_ai">🐦 Twitter</a>
+    <a href="https://twitter.com/nikhilraikwarr">🐦 Twitter</a>
   </p>
 </div>

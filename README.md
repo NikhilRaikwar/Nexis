@@ -21,7 +21,91 @@ Nexis leverages **Civic Auth** for secure, seamless Web3 authentication:
 - **🌐 Universal Access** - Works across all devices and browsers
 - **✨ Smooth Integration** - Embedded wallet code provides intuitive user experience
 
-### Implementation Highlights:
+### 💻 Implementation Code:
+
+```tsx
+// App.tsx - Civic Auth Provider Setup
+import { CivicAuthProvider } from "@civic/auth-web3/react";
+
+const App = () => {
+  const civicAuthClientId = import.meta.env.VITE_CIVIC_AUTH_CLIENT_ID;
+
+  return (
+    <CivicAuthProvider clientId={civicAuthClientId}>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <BrowserRouter>
+            <AuthProvider>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+              </Routes>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </CivicAuthProvider>
+  );
+};
+```
+
+```tsx
+// AuthContext.tsx - Civic Auth Integration
+import { useUser } from '@civic/auth-web3/react';
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const { user, signIn, signOut, isLoading } = useUser();
+  const navigate = useNavigate();
+  
+  const isAuthenticated = !!user;
+
+  const handleSignIn = useCallback(async () => {
+    try {
+      await signIn();
+      // Auto-redirect to dashboard after authentication
+    } catch (error) {
+      console.error('Sign-in error:', error);
+      throw error;
+    }
+  }, [signIn]);
+
+  return (
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated,
+      isLoading,
+      signIn: handleSignIn,
+      signOut,
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+```
+
+```tsx
+// Navigation.tsx - One-Click Authentication
+const handleGetStarted = async () => {
+  if (isAuthenticated) {
+    navigate('/dashboard');
+  } else {
+    try {
+      // Trigger full-page Civic Auth flow
+      await signIn();
+      // Navigation handled automatically by auth context
+    } catch (error) {
+      console.error('Authentication failed:', error);
+      alert('Authentication failed. Please try again.');
+    }
+  }
+};
+```
+
+### 🎯 Implementation Highlights:
 - **Go-to-Market Ready** - Production-grade authentication system
 - **Real-World Problem Solving** - Eliminates complex wallet setup barriers
 - **Creative Use Case** - AI + Authentication for mass Web3 adoption

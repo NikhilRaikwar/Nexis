@@ -8,41 +8,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { useApiHealth } from './hooks/useApiHealth';
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, CheckCircle } from "lucide-react";
 
 const queryClient = new QueryClient();
-
-const BackendStatus = () => {
-  const { isHealthy, isChecking, error } = useApiHealth();
-
-  if (isChecking) {
-    return (
-      <div className="bg-yellow-500/20 text-yellow-300 p-2 text-center text-sm">
-        Checking backend connection...
-      </div>
-    );
-  }
-
-  if (!isHealthy) {
-    return (
-      <Alert className="rounded-none border-red-500/20 bg-red-500/10 border-x-0 border-t-0">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription className="text-red-400">
-          Backend server connection failed. The server may be starting up. Please wait a moment and try again.
-        </AlertDescription>
-      </Alert>
-    );
-  }
-
-  return (
-    <div className="bg-green-500/20 text-green-300 p-2 text-center text-sm flex items-center justify-center gap-2">
-      <CheckCircle className="h-4 w-4" />
-      Connected to Nexis backend server
-    </div>
-  );
-};
 
 const App = () => {
   const civicAuthClientId = import.meta.env.VITE_CIVIC_AUTH_CLIENT_ID;
@@ -68,7 +35,6 @@ const App = () => {
           <div className="min-h-screen bg-background">
             <Toaster />
             <Sonner />
-            <BackendStatus />
             <BrowserRouter>
               <AuthProvider>
                 <Routes>

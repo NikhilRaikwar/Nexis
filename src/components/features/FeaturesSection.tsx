@@ -9,12 +9,12 @@ export const FeaturesSection = () => {
       {/* Header Section */}
       <div className="max-w-2xl mb-20">
         <h2 className="text-5xl md:text-6xl font-normal mb-6 tracking-tight text-left">
-          Blockchain 
+          Multi-Chain 
           <br />
           <span className="text-gradient font-medium">Simplified with AI</span>
         </h2>
         <p className="text-lg md:text-xl text-gray-400 text-left">
-          Experience the future of blockchain interaction with Nexis’s AI agent, designed for seamless operations on the Base network.
+          Experience the future of blockchain interaction with Nexis's AI agent, designed for seamless operations across 6+ blockchain networks including Ethereum, Base, Solana, and more.
         </p>
       </div>
 

@@ -1,6 +1,6 @@
 // API Configuration for Render Backend
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://nexis-jmpk.onrender.com',
+  BASE_URL: import.meta.env.VITE_BACKEND_URL || 'https://nexis-zona.onrender.com',
   ENDPOINTS: {
     AGENT: '/api/agent',
     HEALTH: '/api/health'

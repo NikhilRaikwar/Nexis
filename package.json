@@ -11,15 +11,14 @@
     "preview": "vite preview",
     "dev:agent": "node server/agent.js",
     "dev:full": "concurrently \"npm run dev\" \"npm run dev:agent\"",
-    "start:agent": "node server/agent.js",
-    "vercel-build": "npm run build"
+    "start:agent": "node server/agent.js"
   },
   "dependencies": {
     "@civic/auth-web3": "^0.5.15",
     "@geist-ui/core": "^2.3.8",
     "@hookform/resolvers": "^3.9.0",
     "@langchain/core": "^0.3.0",
-    "@langchain/langgraph": "^0.2.0",
+    "@langchain/langgraph": "^0.3.1",
     "@langchain/openai": "^0.3.0",
     "@lottiefiles/dotlottie-react": "^0.10.0",
     "@radix-ui/react-accordion": "^1.2.0",
@@ -51,7 +50,6 @@
     "@radix-ui/react-tooltip": "^1.1.2",
     "@tanstack/react-query": "^5.56.2",
     "@vercel/analytics": "^1.5.0",
-    "@vercel/node": "^3.0.0",
     "aceternity-ui": "^0.2.2",
     "axios": "^1.7.0",
     "cheerio": "^1.0.0",
@@ -85,9 +83,10 @@
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@tailwindcss/typography": "^0.5.15",
-    "@types/node": "^22.5.5",
+    "@types/node": "^22.15.31",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@vercel/node": "^5.2.2",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "autoprefixer": "^10.4.20",
     "concurrently": "^8.2.0",
@@ -98,9 +97,10 @@
     "lovable-tagger": "^1.0.19",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.11",
-    "ts-node": "^10.9.0",
-    "typescript": "^5.5.3",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.2",
+    "typescript": "^5.8.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.19"
   }
 }

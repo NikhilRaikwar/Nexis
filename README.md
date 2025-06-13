@@ -11,6 +11,22 @@
 
 Nexis is a cutting-edge AI-powered Web3 assistant that simplifies blockchain interactions across multiple networks. Using natural language processing, users can perform complex blockchain operations through simple conversational commands. Built with React, TypeScript, and powered by OpenAI's GPT-4, Nexis makes Web3 accessible to everyone.
 
+## 🔐 Civic Authentication
+
+Nexis leverages **Civic Auth** for secure, seamless Web3 authentication:
+
+- **🛡️ Secure Identity Verification** - Industry-standard Web3 authentication
+- **⚡ Frictionless UX** - One-click wallet connection with embedded wallet support
+- **🔒 Privacy-First** - No personal data storage, decentralized identity management
+- **🌐 Universal Access** - Works across all devices and browsers
+- **✨ Smooth Integration** - Embedded wallet code provides intuitive user experience
+
+### Implementation Highlights:
+- **Go-to-Market Ready** - Production-grade authentication system
+- **Real-World Problem Solving** - Eliminates complex wallet setup barriers
+- **Creative Use Case** - AI + Authentication for mass Web3 adoption
+- **Marketing Ready** - User-friendly onboarding for mainstream audiences
+
 ## 🔗 Supported Blockchains
 
 | Network | Type | Currency | Status |
@@ -23,11 +39,6 @@ Nexis is a cutting-edge AI-powered Web3 assistant that simplifies blockchain int
 | 🟠 **Solana Devnet** | Non-EVM | SOL | ✅ Active |
 
 ## ⚡ Key Features
-
-### 🔐 Secure Authentication
-- **Civic Auth Integration** - Industry-standard Web3 authentication
-- **No Private Key Storage** - Keys processed securely, never stored
-- **Multi-Chain Wallet Support** - Connect EVM and Solana wallets simultaneously
 
 ### 🤖 AI-Powered Operations
 - **Natural Language Processing** - Interact using plain English

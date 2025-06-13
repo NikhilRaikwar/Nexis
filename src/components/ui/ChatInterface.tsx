@@ -1,14 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Loader2 } from 'lucide-react';
+import { Send, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage, Message } from './ChatMessage';
 import { useToast } from '@/hooks/use-toast';
-import { API_CONFIG, makeApiRequest } from '../../config/api';
+import { makeApiRequest, API_CONFIG } from '../../config/api';
+import { useAuth } from '@/contexts/AuthContext';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export const ChatInterface: React.FC = () => {
+  const { isAuthenticated, user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -19,6 +22,7 @@ export const ChatInterface: React.FC = () => {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -35,30 +39,66 @@ export const ChatInterface: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Authentication check
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setConnectionError('Please authenticate with Civic to use the AI assistant.');
+    } else {
+      setConnectionError(null);
+    }
+  }, [isAuthenticated]);
+
   const handleSendMessage = async (message: string) => {
+    // Verify authentication before processing
+    if (!isAuthenticated) {
+      throw new Error('Authentication required. Please sign in with Civic to continue.');
+    }
+
     try {
+      console.log('Sending message to Render backend:', message);
+      
       const response = await makeApiRequest(API_CONFIG.ENDPOINTS.AGENT, {
-        input: message
+        input: message,
+        user: user ? {
+          id: user.id,
+          name: user.name,
+          email: user.email
+        } : null
       });
       
+      if (!response.response) {
+        throw new Error('Empty response from backend server');
+      }
+
       // Add the assistant's response to messages
       const assistantMessage: Message = {
         id: Date.now().toString(),
-        content: response.response || 'I apologize, but I received an empty response.',
+        content: response.response,
         role: 'assistant',
         timestamp: new Date(),
       };
 
       setMessages(prev => [...prev, assistantMessage]);
+      setConnectionError(null);
       
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error sending message to backend:', error);
       throw error;
     }
   };
 
   const sendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
+
+    // Check authentication first
+    if (!isAuthenticated) {
+      toast({
+        title: 'Authentication Required',
+        description: 'Please sign in with Civic to use the AI assistant.',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -70,6 +110,7 @@ export const ChatInterface: React.FC = () => {
     setMessages(prev => [...prev, userMessage]);
     setInputValue('');
     setIsLoading(true);
+    setConnectionError(null);
 
     try {
       await handleSendMessage(userMessage.content);
@@ -77,18 +118,31 @@ export const ChatInterface: React.FC = () => {
     } catch (error) {
       console.error('Error sending message:', error);
       
-      const errorMessage: Message = {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
+      // Handle specific error types
+      let displayError = errorMessage;
+      if (errorMessage.includes('timeout')) {
+        displayError = 'The server is starting up. Please wait a moment and try again.';
+      } else if (errorMessage.includes('Authentication required')) {
+        displayError = 'Please sign in with Civic to continue using the AI assistant.';
+      } else if (errorMessage.includes('Failed to connect')) {
+        displayError = 'Unable to connect to the AI service. Please check your connection and try again.';
+      }
+
+      const errorResponseMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: 'I apologize, but I\'m having trouble connecting to the AI services right now. Please make sure the API is properly deployed and configured with your OpenAI API key.',
+        content: `I apologize, but I'm having trouble processing your request: ${displayError}`,
         role: 'assistant',
         timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, errorResponseMessage]);
+      setConnectionError(displayError);
       
       toast({
         title: 'Connection Error',
-        description: 'Failed to connect to AI agent. Please check API configuration.',
+        description: displayError,
         variant: 'destructive',
       });
     } finally {
@@ -110,6 +164,16 @@ export const ChatInterface: React.FC = () => {
       transition={{ duration: 0.5 }}
       className="h-full flex flex-col glass rounded-xl overflow-hidden border border-white/10"
     >
+      {/* Connection Status */}
+      {connectionError && (
+        <Alert className="m-4 mb-0 border-red-500/20 bg-red-500/10">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="text-red-400">
+            {connectionError}
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Messages Area */}
       <ScrollArea ref={scrollAreaRef} className="flex-1 p-0">
         <div className="space-y-2">
@@ -136,13 +200,17 @@ export const ChatInterface: React.FC = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask about balances, send tokens, or any blockchain operation..."
+            placeholder={
+              isAuthenticated 
+                ? "Ask about balances, send tokens, or any blockchain operation..."
+                : "Please sign in with Civic to start chatting..."
+            }
             className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-gray-400"
-            disabled={isLoading}
+            disabled={isLoading || !isAuthenticated}
           />
           <Button
             onClick={sendMessage}
-            disabled={!inputValue.trim() || isLoading}
+            disabled={!inputValue.trim() || isLoading || !isAuthenticated}
             className="button-gradient px-3"
           >
             {isLoading ? (
@@ -153,7 +221,11 @@ export const ChatInterface: React.FC = () => {
           </Button>
         </div>
         <div className="mt-2 text-xs text-gray-500 text-center">
-          Powered by Nexis AI • Multi-Chain Support • OpenAI GPT-4
+          {isAuthenticated ? (
+            <>Powered by Nexis AI • Connected to {API_CONFIG.BASE_URL}</>
+          ) : (
+            <>Sign in with Civic to start using Nexis AI</>
+          )}
         </div>
       </div>
     </motion.div>

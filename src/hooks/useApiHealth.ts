@@ -1,27 +1,47 @@
 import { useState, useEffect } from 'react';
-import { API_CONFIG } from '../config/api';
+import { checkBackendHealth } from '../config/api';
 
 export const useApiHealth = () => {
   const [isHealthy, setIsHealthy] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let mounted = true;
+    
     const checkHealth = async () => {
+      if (!mounted) return;
+      
+      setIsChecking(true);
       try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.HEALTH}`);
-        const data = await response.json();
-        setIsHealthy(data.status === 'healthy');
-        setError(null);
+        const healthy = await checkBackendHealth();
+        if (mounted) {
+          setIsHealthy(healthy);
+          setError(healthy ? null : 'Backend server is not responding');
+        }
       } catch (err) {
-        setIsHealthy(false);
-        setError('Backend server is not responding');
+        if (mounted) {
+          setIsHealthy(false);
+          setError('Failed to connect to backend server');
+        }
+      } finally {
+        if (mounted) {
+          setIsChecking(false);
+        }
       }
     };
 
+    // Initial health check
     checkHealth();
-    const interval = setInterval(checkHealth, 30000); // Check every 30 seconds
-    return () => clearInterval(interval);
+    
+    // Check health every 30 seconds
+    const interval = setInterval(checkHealth, 30000);
+    
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
-  return { isHealthy, error };
+  return { isHealthy, isChecking, error };
 };

@@ -6,6 +6,7 @@ import { FeaturesSection } from "@/components/features/FeaturesSection";
 import { FAQSection } from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
+import HeroVideoDialog from "@/components/magicui/hero-video-dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -113,13 +114,13 @@ const Index = () => {
           transition={{ delay: 0.6 }}
           className="relative mx-auto max-w-5xl mt-20"
         >
-          <div className="glass rounded-xl overflow-hidden">
-            <img
-              src="/uploads/dashboard.png"
-              alt="CryptoTrade Dashboard"
-              className="w-full h-auto"
-            />
-          </div>
+          <HeroVideoDialog
+            className="dark:hidden block"
+            animationStyle="from-center"
+            videoSrc="https://www.youtube.com/embed/E7Hr-_oFaB0"
+            thumbnailSrc="/uploads/dashboard.png"
+            thumbnailAlt="Nexis AI-Powered Web3 Assistant Demo"
+          />
         </motion.div>
       </motion.section>
 

@@ -262,7 +262,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <div align="center">
   <p>Made with ❤️ by the Nexis team</p>
   <p>
-    <a href="[https://nexis-mocha.vercel.app/](https://nexis-mocha.vercel.app/)">🌐 Website</a> •
+    <a href="https://nexis-mocha.vercel.app">🌐 Website</a> •
     <a href="https://github.com/nikhilraikwar/nexis">📱 GitHub</a> •
     <a href="https://twitter.com/nikhilraikwarr">🐦 Twitter</a>
   </p>

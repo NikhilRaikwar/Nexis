@@ -7,11 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "build:server": "tsc --project server/tsconfig.json",
     "lint": "eslint .",
     "preview": "vite preview",
-    "dev:agent": "node server/agent.js",
+    "dev:agent": "npm run build:server && node server/dist/agent.js",
     "dev:full": "concurrently \"npm run dev\" \"npm run dev:agent\"",
-    "start:agent": "node server/agent.js"
+    "start:agent": "npm run build:server && node server/dist/agent.js"
   },
   "dependencies": {
     "@civic/auth-web3": "^0.5.15",

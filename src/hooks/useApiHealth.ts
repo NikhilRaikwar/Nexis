@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { checkBackendHealth } from '../config/api';
+import { testBackendConnection } from '../config/api';
 
 export const useApiHealth = () => {
   const [isHealthy, setIsHealthy] = useState(false);
@@ -14,7 +14,7 @@ export const useApiHealth = () => {
       
       setIsChecking(true);
       try {
-        const healthy = await checkBackendHealth();
+        const healthy = await testBackendConnection();
         if (mounted) {
           setIsHealthy(healthy);
           setError(healthy ? null : 'Backend server is not responding');

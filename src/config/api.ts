@@ -2,8 +2,7 @@
 export const API_CONFIG = {
   BASE_URL: import.meta.env.VITE_BACKEND_URL || 'https://nexis-zona.onrender.com',
   ENDPOINTS: {
-    AGENT: '/api/agent',
-    HEALTH: '/api/health'
+    AGENT: '/agent', // Direct agent endpoint
   },
   TIMEOUT: 30000, // 30 seconds timeout for Render cold starts
 };
@@ -58,23 +57,22 @@ export const makeApiRequest = async (endpoint: string, data: any): Promise<ApiRe
   }
 };
 
-export const checkBackendHealth = async (): Promise<boolean> => {
+// Test backend connection by making a simple request
+export const testBackendConnection = async (): Promise<boolean> => {
   try {
-    const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.HEALTH}`, {
-      method: 'GET',
+    const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AGENT}`, {
+      method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      signal: AbortSignal.timeout(10000), // 10 second timeout for health check
+      body: JSON.stringify({ input: 'test connection' }),
+      signal: AbortSignal.timeout(10000), // 10 second timeout for connection test
     });
     
-    if (response.ok) {
-      const data = await response.json();
-      return data.status === 'healthy';
-    }
-    return false;
+    return response.ok;
   } catch (error) {
-    console.error('Health check failed:', error);
+    console.error('Backend connection test failed:', error);
     return false;
   }
 };
